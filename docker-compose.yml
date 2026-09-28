@@ -1,0 +1,46 @@
+services:
+  backend:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-your_key_here}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-brd_db}
+      MYSQL_USER: ${MYSQL_USER:-brd_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-your_password_here}
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    command: npm start
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8000}
+    depends_on:
+      - backend
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-brd_db}
+      MYSQL_USER: ${MYSQL_USER:-brd_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-your_password_here}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-your_root_password_here}
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
