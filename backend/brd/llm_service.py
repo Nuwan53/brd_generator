@@ -1,66 +1,51 @@
 import os
 import json
-from importlib import import_module
+from google import genai
+from dotenv import load_dotenv
 
-try:
-    load_dotenv = import_module("dotenv").load_dotenv
-    load_dotenv()
-except ImportError:
-    # dotenv is optional; use the process environment when it is unavailable.
-    pass
+load_dotenv()
 
-try:
-    anthropic = import_module("anthropic")
-except ImportError as exc:
-    raise ImportError(
-        "The 'anthropic' package is required. Install it with: pip install anthropic"
-    ) from exc
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
-BRD_TOOL = {
-    "name": "generate_brd",
-    "description": "Generate a structured Business Requirements Document from raw meeting notes or requirements text.",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "title": {"type": "string"},
-            "overview": {"type": "string"},
-            "stakeholders": {"type": "array", "items": {"type": "string"}},
-            "functional_requirements": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id": {"type": "string"},
-                        "description": {"type": "string"}
-                    },
-                    "required": ["id", "description"]
-                }
-            },
-            "non_functional_requirements": {"type": "array", "items": {"type": "string"}},
-            "user_stories": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "as_a": {"type": "string"},
-                        "i_want": {"type": "string"},
-                        "so_that": {"type": "string"}
-                    },
-                    "required": ["as_a", "i_want", "so_that"]
-                }
-            },
-            "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
-            "assumptions": {"type": "array", "items": {"type": "string"}},
-            "open_questions": {"type": "array", "items": {"type": "string"}}
+BRD_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "title": {"type": "string"},
+        "overview": {"type": "string"},
+        "stakeholders": {"type": "array", "items": {"type": "string"}},
+        "functional_requirements": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "string"},
+                    "description": {"type": "string"}
+                },
+                "required": ["id", "description"]
+            }
         },
-        "required": [
-            "title", "overview", "stakeholders", "functional_requirements",
-            "non_functional_requirements", "user_stories",
-            "acceptance_criteria", "assumptions", "open_questions"
-        ]
-    }
+        "non_functional_requirements": {"type": "array", "items": {"type": "string"}},
+        "user_stories": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "as_a": {"type": "string"},
+                    "i_want": {"type": "string"},
+                    "so_that": {"type": "string"}
+                },
+                "required": ["as_a", "i_want", "so_that"]
+            }
+        },
+        "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+        "assumptions": {"type": "array", "items": {"type": "string"}},
+        "open_questions": {"type": "array", "items": {"type": "string"}}
+    },
+    "required": [
+        "title", "overview", "stakeholders", "functional_requirements",
+        "non_functional_requirements", "user_stories",
+        "acceptance_criteria", "assumptions", "open_questions"
+    ]
 }
 
 SYSTEM_PROMPT = """You are a senior business analyst. Given raw, possibly messy or contradictory
@@ -71,17 +56,13 @@ undefined actors, or missing information in the input, and flag them there rathe
 resolving them yourself. Do not invent requirements that aren't implied by the input."""
 
 def generate_brd(raw_text: str) -> dict:
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=2000,
-        system=SYSTEM_PROMPT,
-        tools=[BRD_TOOL],
-        tool_choice={"type": "tool", "name": "generate_brd"},
-        messages=[{"role": "user", "content": raw_text}]
+    response = client.models.generate_content(
+        model="gemini-3.8-flash",
+        contents=raw_text,
+        config={
+            "system_instruction": SYSTEM_PROMPT,
+            "response_mime_type": "application/json",
+            "response_schema": BRD_SCHEMA,
+        },
     )
-
-    for block in response.content:
-        if block.type == "tool_use" and block.name == "generate_brd":
-            return block.input
-
-    raise ValueError("No tool_use block returned by the model")
+    return json.loads(response.text)

@@ -32,9 +32,3 @@ def list_brds(request):
     docs = BRDDocument.objects.all().order_by('-created_at')
     serializer = BRDDocumentSerializer(docs, many=True)
     return Response(serializer.data)
-
-@api_view(['POST'])
-def create_brd(request):
-    print("RAW BODY:", request.body)
-    print("PARSED DATA:", request.data)
-    raw_text = request.data.get('raw_input', '').strip()
