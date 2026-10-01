@@ -30,3 +30,40 @@ header p { color: #666; }
 .brd-section { margin-bottom: 1.25rem; }
 .brd-section h3 { margin-bottom: 0.4rem; font-size: 1rem; color: #333; }
 .brd-section-highlight { background: #fff7ed; border-left: 4px solid #f59e0b; padding: 0.75rem 1rem; border-radius: 4px; }
+
+.layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.main-column { flex: 1; min-width: 0; }
+.side-column { width: 260px; flex-shrink: 0; }
+
+.brd-history {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.brd-history h3 { margin-top: 0; font-size: 0.95rem; color: #333; }
+.brd-history ul { list-style: none; padding: 0; margin: 0; }
+.brd-history li {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-radius: 4px;
+}
+.brd-history li:hover { background: #f3f4f6; }
+.history-title { font-size: 0.85rem; font-weight: 500; color: #1f2937; }
+.history-date { font-size: 0.7rem; color: #9ca3af; }
+
+.history-status { color: #666; font-size: 0.9rem; }
+.history-status.error { color: #991b1b; }
+
+@media (max-width: 700px) {
+  .layout { flex-direction: column; }
+  .side-column { width: 100%; }
+}

@@ -55,14 +55,23 @@ Be rigorous about the "open_questions" field — actively look for ambiguities, 
 undefined actors, or missing information in the input, and flag them there rather than silently
 resolving them yourself. Do not invent requirements that aren't implied by the input."""
 
-def generate_brd(raw_text: str) -> dict:
-    response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents=raw_text,
-        config={
-            "system_instruction": SYSTEM_PROMPT,
-            "response_mime_type": "application/json",
-            "response_schema": BRD_SCHEMA,
-        },
-    )
-    return json.loads(response.text)
+import time
+
+def generate_brd(raw_text: str, max_retries: int = 3) -> dict:
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.8-flash",
+                contents=raw_text,
+                config={
+                    "system_instruction": SYSTEM_PROMPT,
+                    "response_mime_type": "application/json",
+                    "response_schema": BRD_SCHEMA,
+                },
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            if "UNAVAILABLE" in str(e) and attempt < max_retries - 1:
+                time.sleep(2 ** attempt)  # 1s, 2s, 4s backoff
+                continue
+            raise
