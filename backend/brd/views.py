@@ -32,3 +32,38 @@ def list_brds(request):
     docs = BRDDocument.objects.all().order_by('-created_at')
     serializer = BRDDocumentSerializer(docs, many=True)
     return Response(serializer.data)
+
+
+from django.http import FileResponse
+from .export_service import export_to_docx, export_to_pdf
+
+@api_view(['GET'])
+def export_brd_docx(request, doc_id):
+    try:
+        doc = BRDDocument.objects.get(id=doc_id)
+    except BRDDocument.DoesNotExist:
+        return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    buffer = export_to_docx(doc.generated_output)
+    response = FileResponse(
+        buffer,
+        as_attachment=True,
+        filename=f"{doc.title.replace(' ', '_')}.docx"
+    )
+    return response
+
+
+@api_view(['GET'])
+def export_brd_pdf(request, doc_id):
+    try:
+        doc = BRDDocument.objects.get(id=doc_id)
+    except BRDDocument.DoesNotExist:
+        return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    buffer = export_to_pdf(doc.generated_output)
+    response = FileResponse(
+        buffer,
+        as_attachment=True,
+        filename=f"{doc.title.replace(' ', '_')}.pdf"
+    )
+    return response

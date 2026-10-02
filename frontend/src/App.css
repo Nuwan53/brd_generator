@@ -67,3 +67,11 @@ header p { color: #666; }
   .layout { flex-direction: column; }
   .side-column { width: 100%; }
 }
+
+.brd-output-header { display: flex; justify-content: space-between; align-items: center; }
+.export-buttons { display: flex; gap: 0.5rem; }
+.export-buttons a {
+  font-size: 0.8rem; padding: 0.4rem 0.8rem; border-radius: 6px;
+  background: #e5e7eb; color: #333; text-decoration: none;
+}
+.export-buttons a:hover { background: #d1d5db; }

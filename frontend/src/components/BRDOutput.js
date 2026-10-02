@@ -1,9 +1,20 @@
-function BRDOutput({ data }) {
-  if (!data) return null;
+function BRDOutput({ doc }) {
+  if (!doc) return null;
+  const data = doc.generated_output;
 
   return (
     <div className="brd-output">
-      <h2>{data.title}</h2>
+      <div className="brd-output-header">
+        <h2>{data.title}</h2>
+        <div className="export-buttons">
+          <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/docx/`} download>
+            Export Word
+          </a>
+          <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/pdf/`} download>
+            Export PDF
+          </a>
+        </div>
+      </div>
 
       <Section title="Overview">
         <p>{data.overview}</p>

@@ -31,7 +31,7 @@ function BRDHistory({ onSelect, refreshKey }) {
       <h3>Past BRDs</h3>
       <ul>
         {history.map((doc) => (
-          <li key={doc.id} onClick={() => onSelect(doc.generated_output)}>
+          <li key={doc.id} onClick={() => onSelect(doc)}>
             <span className="history-title">{doc.title}</span>
             <span className="history-date">
               {new Date(doc.created_at).toLocaleString()}

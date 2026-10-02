@@ -13,21 +13,19 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSubmit = async (rawInput) => {
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-    try {
-      const data = await generateBRD(rawInput);
-      setResult(data.generated_output);
-      setRefreshKey((k) => k + 1); // triggers history refetch
-    } catch (err) {
-      setError(
-        err.response?.data?.error || 'Something went wrong generating the BRD. Check the backend is running.'
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  setError(null);
+  setResult(null);
+  try {
+    const data = await generateBRD(rawInput);
+    setResult(data); // full doc now, not just data.generated_output
+    setRefreshKey((k) => k + 1);
+  } catch (err) {
+    setError(err.response?.data?.error || 'Something went wrong generating the BRD.');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="app">
@@ -41,7 +39,7 @@ function App() {
           <BRDForm onSubmit={handleSubmit} isLoading={isLoading} />
           {isLoading && <LoadingSpinner />}
           {error && <div className="error-banner">{error}</div>}
-          {result && <BRDOutput data={result} />}
+          {result && <BRDOutput doc={result} />}
         </div>
 
         <aside className="side-column">
