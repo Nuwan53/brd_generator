@@ -11,27 +11,22 @@ function BRDForm({ onSubmit, isLoading }) {
     onSubmit(rawInput);
   };
 
-  const loadSample = () => {
-    setRawInput(SAMPLE_INPUT);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="brd-form">
-      <label htmlFor="raw-input">Paste your raw meeting notes / requirements</label>
+    <form onSubmit={handleSubmit} className="panel-intake">
+      <p className="panel-label">Raw meeting notes</p>
       <textarea
-        id="raw-input"
+        className="ruled-textarea"
         value={rawInput}
         onChange={(e) => setRawInput(e.target.value)}
-        rows={10}
         placeholder="Paste messy meeting notes here..."
         disabled={isLoading}
       />
-      <div className="form-actions">
-        <button type="button" onClick={loadSample} disabled={isLoading}>
+      <div className="intake-actions">
+        <button type="button" className="btn" onClick={() => setRawInput(SAMPLE_INPUT)} disabled={isLoading}>
           Load sample input
         </button>
-        <button type="submit" disabled={isLoading || !rawInput.trim()}>
-          {isLoading ? 'Generating...' : 'Generate BRD'}
+        <button type="submit" className="btn btn-primary" disabled={isLoading || !rawInput.trim()}>
+          {isLoading ? 'Generating…' : 'Generate BRD'}
         </button>
       </div>
     </form>

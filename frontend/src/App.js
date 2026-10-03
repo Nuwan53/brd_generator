@@ -28,26 +28,30 @@ function App() {
 };
 
   return (
-    <div className="app">
-      <header>
-        <h1>BRD Generator</h1>
-        <p>Turn messy meeting notes into a structured Business Requirements Document.</p>
-      </header>
-
-      <div className="layout">
-        <div className="main-column">
-          <BRDForm onSubmit={handleSubmit} isLoading={isLoading} />
-          {isLoading && <LoadingSpinner />}
-          {error && <div className="error-banner">{error}</div>}
-          {result && <BRDOutput doc={result} />}
-        </div>
-
-        <aside className="side-column">
-          <BRDHistory onSelect={setResult} refreshKey={refreshKey} />
-        </aside>
-      </div>
+  <div className="app">
+    <div className="topbar">
+      <h1>BRD Generator</h1>
+      <p>Raw notes in, structured requirements out</p>
     </div>
-  );
+
+    <div className="workspace">
+      <BRDForm onSubmit={handleSubmit} isLoading={isLoading} />
+
+      <div>
+        {isLoading && (
+          <div className="loading-spinner">
+            <div className="spinner" />
+            <span>Drafting your BRD…</span>
+          </div>
+        )}
+        {error && <div className="error-banner">{error}</div>}
+        {result && <BRDOutput doc={result} />}
+      </div>
+
+      <BRDHistory onSelect={setResult} refreshKey={refreshKey} />
+    </div>
+  </div>
+);
 }
 
 export default App;

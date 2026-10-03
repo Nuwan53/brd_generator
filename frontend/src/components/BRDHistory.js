@@ -27,8 +27,8 @@ function BRDHistory({ onSelect, refreshKey }) {
   if (history.length === 0) return <p className="history-status">No BRDs generated yet.</p>;
 
   return (
-    <div className="brd-history">
-      <h3>Past BRDs</h3>
+    <div className="panel-history">
+      <p className="panel-label">Past documents</p>
       <ul>
         {history.map((doc) => (
           <li key={doc.id} onClick={() => onSelect(doc)}>

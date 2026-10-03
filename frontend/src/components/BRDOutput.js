@@ -1,79 +1,58 @@
+const SECTIONS = [
+  { key: 'overview', title: 'Overview', render: (d) => <p>{d.overview}</p> },
+  { key: 'stakeholders', title: 'Stakeholders', render: (d) => (
+      <ul>{d.stakeholders.map((s, i) => <li key={i}>{s}</li>)}</ul>
+  )},
+  { key: 'functional_requirements', title: 'Functional Requirements', render: (d) => (
+      <ul>{d.functional_requirements.map((fr) => (
+        <li key={fr.id}>{fr.id}: {fr.description}</li>
+      ))}</ul>
+  )},
+  { key: 'non_functional_requirements', title: 'Non-Functional Requirements', render: (d) => (
+      <ul>{d.non_functional_requirements.map((n, i) => <li key={i}>{n}</li>)}</ul>
+  )},
+  { key: 'user_stories', title: 'User Stories', render: (d) => (
+      <ul>{d.user_stories.map((us, i) => (
+        <li key={i}>As a {us.as_a}, I want {us.i_want}, so that {us.so_that}.</li>
+      ))}</ul>
+  )},
+  { key: 'acceptance_criteria', title: 'Acceptance Criteria', render: (d) => (
+      <ul>{d.acceptance_criteria.map((a, i) => <li key={i}>{a}</li>)}</ul>
+  )},
+  { key: 'assumptions', title: 'Assumptions', render: (d) => (
+      <ul>{d.assumptions.map((a, i) => <li key={i}>{a}</li>)}</ul>
+  )},
+  { key: 'open_questions', title: 'Open Questions', flagged: true, render: (d) => (
+      <ul>{d.open_questions.map((q, i) => <li key={i}>{q}</li>)}</ul>
+  )},
+];
+
 function BRDOutput({ doc }) {
   if (!doc) return null;
   const data = doc.generated_output;
 
   return (
-    <div className="brd-output">
-      <div className="brd-output-header">
-        <h2>{data.title}</h2>
+    <div className="panel-document">
+      <div className="doc-header">
+        <h2 className="doc-title">{data.title}</h2>
         <div className="export-buttons">
-          <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/docx/`} download>
-            Export Word
-          </a>
-          <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/pdf/`} download>
-            Export PDF
-          </a>
+          <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/docx/`} download>Export .docx</a>
+          <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/pdf/`} download>Export .pdf</a>
         </div>
       </div>
 
-      <Section title="Overview">
-        <p>{data.overview}</p>
-      </Section>
-
-      <Section title="Stakeholders">
-        <ul>
-          {data.stakeholders.map((s, i) => <li key={i}>{s}</li>)}
-        </ul>
-      </Section>
-
-      <Section title="Functional Requirements">
-        <ul>
-          {data.functional_requirements.map((fr) => (
-            <li key={fr.id}><strong>{fr.id}:</strong> {fr.description}</li>
-          ))}
-        </ul>
-      </Section>
-
-      <Section title="Non-Functional Requirements">
-        <ul>
-          {data.non_functional_requirements.map((nfr, i) => <li key={i}>{nfr}</li>)}
-        </ul>
-      </Section>
-
-      <Section title="User Stories">
-        <ul>
-          {data.user_stories.map((us, i) => (
-            <li key={i}>As a <strong>{us.as_a}</strong>, I want {us.i_want}, so that {us.so_that}.</li>
-          ))}
-        </ul>
-      </Section>
-
-      <Section title="Acceptance Criteria">
-        <ul>
-          {data.acceptance_criteria.map((ac, i) => <li key={i}>{ac}</li>)}
-        </ul>
-      </Section>
-
-      <Section title="Assumptions">
-        <ul>
-          {data.assumptions.map((a, i) => <li key={i}>{a}</li>)}
-        </ul>
-      </Section>
-
-      <Section title="⚠️ Open Questions / Ambiguities" highlight>
-        <ul>
-          {data.open_questions.map((q, i) => <li key={i}>{q}</li>)}
-        </ul>
-      </Section>
-    </div>
-  );
-}
-
-function Section({ title, children, highlight }) {
-  return (
-    <div className={`brd-section ${highlight ? 'brd-section-highlight' : ''}`}>
-      <h3>{title}</h3>
-      {children}
+      {SECTIONS.map((section, i) => (
+        <div
+          key={section.key}
+          className={`doc-section ${section.flagged ? 'doc-section-flagged' : ''}`}
+        >
+          <span className="doc-section-num">{String(i + 1).padStart(2, '0')}</span>
+          <div className="doc-section-body">
+            <h3>{section.title}</h3>
+            {section.render(data)}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
