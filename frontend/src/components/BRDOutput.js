@@ -40,7 +40,13 @@ function BRDOutput({ doc }) {
           <a href={`http://127.0.0.1:8000/api/brd/export/${doc.id}/pdf/`} download>Export .pdf</a>
         </div>
       </div>
-
+      {doc.transcript && (
+        <div className="doc-transcript">
+          <p className="panel-label">Transcribed from voice note</p>
+          <p className="transcript-text">{doc.transcript}</p>
+        </div>
+      )}
+      
       {SECTIONS.map((section, i) => (
         <div
           key={section.key}

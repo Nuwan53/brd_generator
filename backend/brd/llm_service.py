@@ -75,3 +75,17 @@ def generate_brd(raw_text: str, max_retries: int = 3) -> dict:
                 time.sleep(2 ** attempt)  # 1s, 2s, 4s backoff
                 continue
             raise
+
+from google.genai import types
+
+def transcribe_audio(audio_bytes: bytes, mime_type: str) -> str:
+    response = client.models.generate_content(
+        model="gemini-3.8-flash",
+        contents=[
+            types.Part.from_bytes(data=audio_bytes, mime_type=mime_type),
+            "Provide an exact, complete transcription of this audio. "
+            "Do not summarize or interpret — transcribe the spoken words verbatim, "
+            "including any filler words or false starts, as plain text with no extra commentary."
+        ],
+    )
+    return response.text.strip()

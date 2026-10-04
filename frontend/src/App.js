@@ -3,8 +3,9 @@ import BRDForm from './components/BRDForm';
 import BRDOutput from './components/BRDOutput';
 import LoadingSpinner from './components/LoadingSpinner';
 import BRDHistory from './components/BRDHistory';
-import { generateBRD } from './api/brdApi';
 import './App.css';
+import VoiceUpload from './components/VoiceUpload';
+import { generateBRD, generateBRDFromVoice } from './api/brdApi';
 
 function App() {
   const [result, setResult] = useState(null);
@@ -12,6 +13,20 @@ function App() {
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const handleVoiceSubmit = async (audioFile) => {
+  setIsLoading(true);
+  setError(null);
+  setResult(null);
+  try {
+    const data = await generateBRDFromVoice(audioFile);
+    setResult(data);
+    setRefreshKey((k) => k + 1);
+  } catch (err) {
+    setError(err.response?.data?.error || 'Voice processing failed.');
+  } finally {
+    setIsLoading(false);
+  }
+};
   const handleSubmit = async (rawInput) => {
   setIsLoading(true);
   setError(null);
@@ -35,6 +50,7 @@ function App() {
     </div>
 
     <div className="workspace">
+      <VoiceUpload onSubmit={handleVoiceSubmit} isLoading={isLoading} />
       <BRDForm onSubmit={handleSubmit} isLoading={isLoading} />
 
       <div>

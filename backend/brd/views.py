@@ -67,3 +67,37 @@ def export_brd_pdf(request, doc_id):
         filename=f"{doc.title.replace(' ', '_')}.pdf"
     )
     return response
+
+from .llm_service import generate_brd, transcribe_audio
+
+@api_view(['POST'])
+def create_brd_from_voice(request):
+    audio_file = request.FILES.get('audio')
+    if not audio_file:
+        return Response({"error": "audio file is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    audio_bytes = audio_file.read()
+    mime_type = audio_file.content_type or "audio/mpeg"
+
+    try:
+        transcript = transcribe_audio(audio_bytes, mime_type)
+    except Exception as e:
+        return Response({"error": f"Transcription failed: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+
+    if not transcript:
+        return Response({"error": "Transcription returned empty text"}, status=status.HTTP_502_BAD_GATEWAY)
+
+    try:
+        output = generate_brd(transcript)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_502_BAD_GATEWAY)
+
+    doc = BRDDocument.objects.create(
+        title=output.get("title", "Untitled BRD"),
+        raw_input=transcript,
+        generated_output=output
+    )
+    serializer = BRDDocumentSerializer(doc)
+    response_data = serializer.data
+    response_data['transcript'] = transcript  # so frontend can show what was heard
+    return Response(response_data, status=status.HTTP_201_CREATED)

@@ -13,3 +13,12 @@ export const listBRDs = async () => {
   const response = await axios.get(`${API_BASE}/list/`);
   return response.data;
 };
+
+export const generateBRDFromVoice = async (audioFile) => {
+  const formData = new FormData();
+  formData.append('audio', audioFile);
+  const response = await axios.post(`${API_BASE}/generate-voice/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};

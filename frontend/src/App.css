@@ -238,3 +238,13 @@ body {
   font-size: 0.88rem;
   margin-top: 0.75rem;
 }
+
+.doc-transcript {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.transcript-text { font-style: italic; margin: 0.3rem 0 0; }
