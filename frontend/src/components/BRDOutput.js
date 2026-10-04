@@ -1,5 +1,10 @@
+import ProcessFlowDiagram from './ProcessFlowDiagram';
+
 const SECTIONS = [
   { key: 'overview', title: 'Overview', render: (d) => <p>{d.overview}</p> },
+  { key: 'process_flow', title: 'Process Flow', render: (d) => (
+      <ProcessFlowDiagram chart={d.process_flow} />
+  )},
   { key: 'stakeholders', title: 'Stakeholders', render: (d) => (
       <ul>{d.stakeholders.map((s, i) => <li key={i}>{s}</li>)}</ul>
   )},

@@ -22,9 +22,30 @@ function BRDHistory({ onSelect, refreshKey }) {
     fetchHistory();
   }, [refreshKey]); // refetch whenever a new BRD is generated
 
-  if (loading) return <p className="history-status">Loading history...</p>;
-  if (error) return <p className="history-status error">{error}</p>;
-  if (history.length === 0) return <p className="history-status">No BRDs generated yet.</p>;
+  if (loading) {
+    return (
+      <div className="panel-history">
+        <p className="panel-label">Past documents</p>
+        <p className="history-status">Loading history...</p>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="panel-history">
+        <p className="panel-label">Past documents</p>
+        <p className="history-status error">{error}</p>
+      </div>
+    );
+  }
+  if (history.length === 0) {
+    return (
+      <div className="panel-history">
+        <p className="panel-label">Past documents</p>
+        <p className="history-status">No BRDs generated yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="panel-history">

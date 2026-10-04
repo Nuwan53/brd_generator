@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import BRDForm from './components/BRDForm';
 import BRDOutput from './components/BRDOutput';
-import LoadingSpinner from './components/LoadingSpinner';
 import BRDHistory from './components/BRDHistory';
 import './App.css';
 import VoiceUpload from './components/VoiceUpload';
@@ -43,30 +42,49 @@ function App() {
 };
 
   return (
-  <div className="app">
-    <div className="topbar">
-      <h1>BRD Generator</h1>
-      <p>Raw notes in, structured requirements out</p>
-    </div>
-
-    <div className="workspace">
-      <VoiceUpload onSubmit={handleVoiceSubmit} isLoading={isLoading} />
-      <BRDForm onSubmit={handleSubmit} isLoading={isLoading} />
-
-      <div>
-        {isLoading && (
-          <div className="loading-spinner">
-            <div className="spinner" />
-            <span>Drafting your BRD…</span>
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <div className="brand-mark">B</div>
+          <div>
+            <p className="eyebrow">Workspace</p>
+            <h1>BRD Generator</h1>
           </div>
-        )}
-        {error && <div className="error-banner">{error}</div>}
-        {result && <BRDOutput doc={result} />}
-      </div>
+        </div>
+        <div className="topbar-copy">
+          <span className="status-dot" />
+          <p>Turn conversations into clear requirements</p>
+        </div>
+      </header>
 
-      <BRDHistory onSelect={setResult} refreshKey={refreshKey} />
+      <main className="workspace">
+        <aside className="sidebar">
+          <div className="sidebar-intro">
+            <p className="eyebrow">Start a document</p>
+            <h2>Capture the thinking behind your next project.</h2>
+            <p className="muted-copy">Paste your notes or upload a voice memo. We’ll shape the details into a focused BRD.</p>
+          </div>
+          <VoiceUpload onSubmit={handleVoiceSubmit} isLoading={isLoading} />
+          <BRDHistory onSelect={setResult} refreshKey={refreshKey} />
+        </aside>
+
+        <section className="main-column">
+          <BRDForm onSubmit={handleSubmit} isLoading={isLoading} />
+          {isLoading && (
+            <div className="loading-spinner">
+              <div className="spinner" />
+              <span>Drafting your BRD…</span>
+            </div>
+          )}
+          {error && <div className="error-banner">{error}</div>}
+          {result && <BRDOutput doc={result} />}
+        </section>
+      </main>
+      <footer className="app-footer">
+        <span>BRD Generator</span>
+        <span>Structured clarity from unstructured ideas</span>
+      </footer>
     </div>
-  </div>
 );
 }
 

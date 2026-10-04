@@ -12,6 +12,7 @@ BRD_SCHEMA = {
     "properties": {
         "title": {"type": "string"},
         "overview": {"type": "string"},
+        "process_flow": {"type": "string"},
         "stakeholders": {"type": "array", "items": {"type": "string"}},
         "functional_requirements": {
             "type": "array",
@@ -42,7 +43,7 @@ BRD_SCHEMA = {
         "open_questions": {"type": "array", "items": {"type": "string"}}
     },
     "required": [
-        "title", "overview", "stakeholders", "functional_requirements",
+        "title", "overview", "process_flow", "stakeholders", "functional_requirements",
         "non_functional_requirements", "user_stories",
         "acceptance_criteria", "assumptions", "open_questions"
     ]
@@ -53,7 +54,11 @@ meeting notes or requirements text, produce a structured Business Requirements D
 
 Be rigorous about the "open_questions" field — actively look for ambiguities, contradictions,
 undefined actors, or missing information in the input, and flag them there rather than silently
-resolving them yourself. Do not invent requirements that aren't implied by the input."""
+resolving them yourself. Do not invent requirements that aren't implied by the input.
+
+Also output a simple Mermaid.js flowchart using flowchart TD syntax representing the core process
+described in the input. The process_flow value must contain valid Mermaid syntax only: no markdown
+code fences and no explanation text, just the raw Mermaid syntax as a string value."""
 
 import time
 
