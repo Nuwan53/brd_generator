@@ -19,6 +19,17 @@ In practice, this means a BA walks out of a client meeting with a page of rambli
 - **Export to Word & PDF** — every generated BRD can be downloaded as a formatted `.docx` or `.pdf`
 - **History** — every generated document is saved and browsable, not just the most recent one
 
+## Screenshots
+
+**Input — paste messy meeting notes or upload a voice note**
+![Input screen](docs/screenshots/Screenshot 2026-10-04 115849.png)
+
+**Structured output — requirements, user stories, and flagged open questions**
+![Generated BRD](docs/screenshots/Screenshot 2026-10-04 120019.png)
+
+**Auto-generated process flow diagram**
+![Process flow diagram](docs/screenshots/Screenshot 2026-10-04 115940.png)
+
 ## Tech Stack
 
 | Layer | Technology |
